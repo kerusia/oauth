@@ -1,0 +1,25 @@
+[versions]
+spring-boot = "3.4.1"
+io-spring-dependency = "1.1.7"
+mariadb = "3.3.3"
+lombok = "1.18.46"
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-io-dependency = { id = "io.spring.dependency-management", version.ref = "io-spring-dependency" }
+
+[libraries]
+
+# Spring Boot
+spring-boot-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa"}
+spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security"}
+spring-boot-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client"}
+spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-security-test = { module = "org.springframework.security:spring-security-test" }
+
+# Database
+mariadb-driver = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb"}
+
+# Lombok
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok"}
