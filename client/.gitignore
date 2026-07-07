@@ -1,0 +1,2 @@
+# Ignore vue dependency modules
+node_modules

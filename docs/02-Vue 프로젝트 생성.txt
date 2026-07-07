@@ -1,0 +1,47 @@
+[docker compose]
+  nodejs:
+    image: node:26
+    container_name: oauth-nodejs
+    user: "1000:1000"
+    ports:
+      - "5173:5173"
+      - "8081:8080"
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../../client:/app
+      - /app/node_moduels
+    networks:
+      - oauth-network
+    command: sleep infinity
+
+도커 컨테이너에 node 이미지를 실행하면 기본적으로 node(1000:1000) 계정이 있고,
+별도의 사용자 계정 생성을 통한 권한 관리를 할 필요 없다.
+
+vue create vue@lastest
+npm install
+npm install axios vuetify
+npm run dev -- --host
+
+[질문] -- --host의 의미는 무엇인가?
+[확인]
+첫번째, -- 여기서 부터는 npm의 옵션이 아니라 실행되는 프로그램(Vite)에게 옵션을 전달하라는 의미이다.
+
+따라서,
+    npm run dev -- --host
+는 실제로
+    vite --host
+를 실행하는 것과 같다.
+
+Vite는 기본적으로 127.0.0.1에만 바인딩하여 개발 서버를 실행한다.
+
+Docker 환경에서는 포트 매핑(5173:5173)을 통해 외부 요청이 컨테이너로 전달되지만,
+Vite가 127.0.0.1에서만 대기하고 있으면 컨테이너 외부에서 전달된 요청을 받을 수 없다.
+
+--host 옵션을 사용하면 Vite가 0.0.0.0으로 바인딩되어 모든 네트워크 인터페이스에서 들어오는
+ 요청을 수신하게 되므로, Docker의 포트 매핑을 통해 정상적으로 접근할 수 있다.
+
+ 0.0.0.0의 의미는 "모든 네트워크 인터페이스에 바인딩한다"이다.
+ "모든 IP에서 접속을 허용한다"는 의미가 아니다.
+
