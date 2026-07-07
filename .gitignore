@@ -9,3 +9,8 @@ out
 
 # Ignore IDEA configuration directory
 .idea
+
+# Ignore Docker data directory
+data
+
+

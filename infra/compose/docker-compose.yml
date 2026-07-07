@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mariadb:12
+    container_name: oauth-mariadb
+    user: "1103:1103"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../../data/mariadb:/var/lib/mysql
+    tmpfs:
+      - /run/mariadb:uid=1103,gid=1103,mode=777
+      - /var/run/mysqld:uid=1103,gid=1103,mode=777
+    environment:
+      - MARIADB_ROOT_PASSWORD=admin123!
+      - MARIADB_DATABASE=oauth_db
+      - MARIADB_USER=oauth-app
+      - MARIADB_PASSWORD=oauth-app
+    networks:
+      - oauth-network
+  nodejs:
+    image: node:26
+    container_name: oauth-nodejs
+    user: "1105:1105"
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ../../client:/app
+      - /app/node_moduels
+    networks:
+      - oauth-network
+    command: sh -c "npm install && npm run dev -- --host"
+networks:
+  oauth-network:
+    driver: bridge
