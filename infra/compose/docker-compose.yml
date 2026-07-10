@@ -22,7 +22,7 @@ services:
     container_name: oauth-nodejs
     user: "1000:1000"
     ports:
-      - "5173:5173"
+      - "3000:3000"
     working_dir: /app
     tty: true
     stdin_open: true
@@ -31,7 +31,9 @@ services:
       - /app/node_moduels
     networks:
       - oauth-network
-    command: sleep infinity
+    #command: sleep infinity
+    command: >
+      sh -c "npm run dev -- --host --port 3000"
 networks:
   oauth-network:
     driver: bridge
