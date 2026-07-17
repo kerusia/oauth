@@ -1,0 +1,25 @@
+[질문] Vite가 무엇일까?
+[확인]
+Vite란 개발 중에는 Vite가 웹서버 역할을 하면서 Vue 소스를 브라우저가 이해할 수 있는 Javascript로 변환하여 메모리에 서빙한다.
+배포 시에는 npm run build로 생성된 정적 파일을 Apache나 Nginx가 서빙한다.
+
+VS Code
+    │
+    │ 파일 저장
+    ▼
+Host(client)
+    │
+    │ Bind Mount
+    ▼
+Container(/app)
+    │
+    │ 파일 변경 감지(chokidar)
+    ▼
+Vite Dev Server
+    │
+    ├─ 변경된 파일만 다시 변환(메모리)
+    │
+    ├─ HMR(WebSocket)으로 브라우저에 알림
+    │
+    ▼
+Browser
