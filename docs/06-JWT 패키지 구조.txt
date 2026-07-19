@@ -49,3 +49,104 @@ Property를 어떻게 관리해야할까?
     @ConfigurationPropertiesScan << 추가
     @SpringBootApplication
     public static void main(String[] args) { ... }
+
+
+application.yml
+
+jwt.secret
+      │
+      ▼
+JwtProperties
+      │
+      ▼
+Keys.hmacShaKeyFor(...)
+      │
+      ▼
+SecretKey
+      │
+      ▼
+Jwts.builder()
+      │
+      ├── Header 생성
+      ├── Payload 생성
+      ├── Header.Payload 생성
+      ├── HMACSHA512(Header.Payload, SecretKey)
+      │
+      ▼
+Signature 생성
+      │
+      ▼
+Header.Payload.Signature
+      │
+      ▼
+compact()
+      │
+      ▼
+JWT 문자열
+
+
+
+Builder는 단지 "JWT를 만들기 위한 설계도"를 만드는 것이다. 실제 Header, Payload, Signature 생성은 마지막 compact()를 호출하는 순간 한 번에 수행
+
+builder()
+
+↓
+
+subject()
+
+↓
+
+claim()
+
+↓
+
+expiration()
+
+↓
+
+signWith()
+
+↓
+
+compact()   ← 여기서 Header/Payload/Signature 생성
+
+[Jwts.builder()]
+issuer(): 발급자(iss)
+subject(): 주체(회원번호, 아이디, UUID)
+audience(): 토큰 사용자(aud)
+expiration(): 유효기간(exp)
+issuedAt(): 생성일시(iat)
+notBefore(): 유효기간 시작일시(nbf)
+id(): JWT ID
+claim(): Payload
+signWith(): HMACSHA512 해싱으로 Signature 생성
+compact(): String 토큰 생성
+
+[Jwts.parser()]
+Claims claims =
+    Jwts.parser()
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
+
+
+[JwtTokenProvider]
+토큰 생성 시
+    builder()
+    issuer()
+    subject()
+    claim()
+    issuedAt()
+    expiration()
+    signWith()
+    compact()
+
+토큰 검증 시
+    parser()
+    verifyWith()
+    build()
+    parseSignedClaims()
+    getPayload()
+
+이 정도면 거의 충분하다.
