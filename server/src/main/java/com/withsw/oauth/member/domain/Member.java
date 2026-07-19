@@ -32,6 +32,5 @@ public class Member {
     private Role role = Role.USER;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private SocialType socialType = SocialType.GOOGLE;
+    private SocialType socialType;
 }

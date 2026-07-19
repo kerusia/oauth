@@ -1,0 +1,17 @@
+### 사용자 생성
+POST http://localhost:8080/member/create
+Content-Type: application/json
+
+{
+    "email":"kerusia85@naver.com",
+    "password":"mypassword"
+}
+
+### 로그인
+POST http://localhost:8080/member/login
+Content-Type: application/json
+
+{
+  "email":"kerusia85@naver.com",
+  "password":"mypassword"
+}
