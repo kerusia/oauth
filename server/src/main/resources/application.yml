@@ -13,3 +13,5 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  config:
+    import: classpath:application-jwt.yml

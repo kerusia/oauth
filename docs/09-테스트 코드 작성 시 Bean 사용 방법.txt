@@ -1,0 +1,74 @@
+[질문]
+메인 소스에서 생성되는 JwtProperties 를 테스트 코드에서 불러와 사용하는 방법을 모르겠다.
+
+    @SpringBootTest
+    public class JwtExampleTest {
+
+        private final JwtProperties jwtProperties;
+        private final SecretKey decodedSecretKey;
+
+        public JwtExampleTest(JwtProperties jwtProperties) {
+            this.jwtProperties = jwtProperties;
+            this.decodedSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.secret()));
+        }
+
+        @Test
+        public void testJwt() {
+            String email = "kerusia85@naver.com";
+            String role = Role.ADMIN.name();
+            String token;
+            token = Jwts.builder()
+                        .subject(email)
+                        .claim("role", role)
+                        .expiration(new Date(jwtProperties.accessTokenExpiration()))
+                        .issuer(jwtProperties.issuer())
+                        .signWith(decodedSecretKey, Jwts.SIG.HS512)
+                        .compact();
+            System.out.println(token);
+        }
+    }
+
+    실행결과는 다음과 같다.
+        No ParameterResolver registered for parameter
+        JwtProperties jwtProperties
+
+
+[확인]
+메인 소스의 @SpringApplication, 테스트 소스의 @SpringApplicationTest 이 2개의 어노테이션을 사용한다고 해서
+Spring ApplicationContext가 2개가 되는 것은 아니고 @SpringApplication에 대한 Spring ApplicationContext 1개만 생성이 된다.
+
+질문에서 사용한 테스트 코드는 생성자를 기반으로 빈을 생성하는 구조를 가지는데, @SpringBootTest 클래스는 JUnit이 생성하는 객체이므로
+자체적으로 생성자 주입은 불가하고 Spring과의 협력하는 별도의 구현 방식이 필요하다.
+그래서 생성자 주입법을 사용하기 보다는 다른 방식으로 접근하는 것이 일반적이다.
+대표적인 방법으로 @Autowired, @BeforeEach를 사용하여 생성자 주입과 동일한 효과를 내는 방식이 있다.
+
+    @SpringBootTest
+    public class JwtExampleTest {
+
+        @Autowired <<
+        private JwtProperties jwtProperties;
+
+        private SecretKey decodedSecretKey;
+
+        @BeforeEach <<
+        public void init() {
+            this.decodedSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.secret()));
+        }
+
+        @Test
+        public void testJwt() {
+            String email = "kerusia85@naver.com";
+            String role = Role.ADMIN.name();
+            String token;
+
+            token = Jwts.builder()
+                    .subject(email)
+                    .claim("role", role)
+                    .expiration(new Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration()))
+                    .issuer(jwtProperties.issuer())
+                    .signWith(decodedSecretKey, Jwts.SIG.HS512)
+                    .compact();
+
+            System.out.println(token);
+        }
+    }

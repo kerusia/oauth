@@ -1,0 +1,51 @@
+[질문]
+Property를 어떻게 관리해야할까?
+
+[확인]
+1. 패키지 구조
+    config
+     ├── SecurityConfig
+
+    security
+     ├── jwt
+     │    ├── JwtTokenProvider
+     │    ├── JwtTokenValidator
+     │    ├── JwtTokenResolver
+     │    ├── JwtAuthenticationFilter
+     │    ├── JwtProperties
+     │    ├── JwtClaims
+     │    └── JwtException
+     │
+     └── oauth
+          ├── OAuth2SuccessHandler
+          ├── OAuth2FailureHandler
+          └── ...
+
+2. property 구조
+    application-jwt.yml 파일에 필요한 프로퍼티만 설정을 하고
+    application.yml에서 해당 파일을 import 하는 방식을 사용한다.
+
+    [application-jwt.yml]
+    jwt:
+      secret: ${JWT_SECRET}
+      access-token-expiration: 1800000
+      refresh-token-expiration: 1209600000
+      issuer: kerusia
+
+    [application.yml]
+    spring:
+      config:
+        import: classpath:application-jwt.yml
+
+    [Class]
+    @ConfigurationProperties(prefix = "jwt")
+    public record JwtProperties(
+        String secret,
+        long accessTokenExpiration,
+        long refreshTokenExpiration,
+        String issuer) { }
+
+    [Annotation]
+    @ConfigurationPropertiesScan << 추가
+    @SpringBootApplication
+    public static void main(String[] args) { ... }

@@ -1,0 +1,63 @@
+[질문] application.yml에서 환경변수들을 어떻게 관리하면 효율적인가?
+
+[확인]
+1. application-jwt.yml, application-db.yml, application-radis.yml과 같이 기능별 환경설정 파일을 만들어
+   application.yml에서 해당 파일을 import 하는 방식을 사용한다.
+
+    [application-jwt.yml]
+    jwt:
+      secret: ${JWT_SECRET}
+      access-token-expiration: 1800000
+      refresh-token-expiration: 1209600000
+      issuer: kerusia
+
+    [application-db.yml]
+    ...
+    [application-radis.yml]
+    ...
+
+    [application.yml]
+    spring:
+      config:
+        import:
+          - classpath:application-jwt.yml
+          - classpath:application-db.yml
+          - classpath:application-radis.yml
+
+2. @ConfigurationPropertiesScan, @ConfigurationProperties 사용 (Spring 3 이상)
+    [Class]
+    @ConfigurationProperties(prefix = "jwt")
+    public record JwtProperties(
+        String secret,
+        long accessTokenExpiration,
+        long refreshTokenExpiration,
+        String issuer) { }
+
+    [Annotation]
+    @ConfigurationPropertiesScan << 추가
+    @SpringBootApplication
+    public static void main(String[] args) { ... }
+
+3. @EnableConfigurationProperties(classes), @ConfigurationProperties 사용
+    [Class]
+    @ConfigurationProperties(prefix = "jwt")
+    public record JwtProperties(
+        String secret,
+        long accessTokenExpiration,
+        long refreshTokenExpiration,
+        String issuer) { }
+
+    [Annotation]
+    @EnableConfigurationProperties(JwtProperties.class)
+    @SpringBootApplication
+    public static void main(String[] args) { ... }
+
+    또는, ConfigurationPropertiesConfig 클래스를 만들어서 사용
+
+4. Properties 사용법
+
+    @RequiredArgsConstructor
+    @Component
+    public class JwtProvider() {
+        private final JwtProperties jwtProperties;
+    }

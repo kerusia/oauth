@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -20,6 +21,7 @@ public class MemberService {
 
     public Member create(MemberCreateDto memberCreateDto) {
         Member member = Member.builder()
+                .uuid(UUID.randomUUID().toString())
                 .email(memberCreateDto.getEmail())
                 .password(passwordEncoder.encode(memberCreateDto.getPassword()))
                 .build();

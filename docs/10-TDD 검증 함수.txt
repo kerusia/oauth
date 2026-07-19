@@ -1,0 +1,22 @@
+[질문]
+JWT 검증을 어떻게 하면 좋을까?
+
+[확인]
+
+1. Not Null인지 확인한다.
+    assertNotNull(token);
+
+2. Header.Payload.Signature 구조를 가졌는지 확인한다.
+    assertEquals(3, token.split("\\.").length);
+
+3. 주체를 확인한다.
+    assertEquals(email, claims.getSubject());
+
+4. 권한을 확인한다.
+    assertEquals(role, claims.get("role"));
+
+5. 발급자를 확인한다.
+    assertEquals(jwtProperties.issuer(), claims.getIssuer());
+
+6. Token 유효기간이 만료되었는지 확인한다.
+    assertTrue(claims.getExpiration().after(new Date()));

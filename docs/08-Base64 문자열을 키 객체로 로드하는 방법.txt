@@ -1,0 +1,41 @@
+[질문]
+Base64 문자열로 된 SecretKey를 SecretKeySpec 클래스를 사용하여 SignatureAlgorithm.HS256.getJcaName() 알고리즘을 사용하려고하니
+Deprecated로 나오는데 어떤 식으로 구현하도록 변경되었는가?
+
+    public JwtTokenProvider() {
+        String secretKey = "base64인코딩";
+        String encodedSecretKey;
+
+        public JwtTokenProvider() {
+            ...
+
+            this.encodedSecretKey = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName()); << 문제의 장소
+        }
+    }
+
+[확인]
+
+String secretKey = "base64인코딩";
+SecretKey encodedSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey);
+
+왜 Keys.hmacShaKeyFor() 함수를 만든 것일까?
+SHA를 많이 사용해서 추가된 것은 아니고, SecretKeySpec은 너무 범용적인 클래스라 JWT에서 안전하게 사용하기 어려웠고, JJWT가 JWT에 맞는
+안전한 API를 제공하기 위해 Keys.hmacShaKeyFor()이 만들어졌다고 한다.
+
+SecretKeySpec은 JJWT 클래스가 아니라 JCA(Java Cryptography Architecture)의 클래스로 AES, DES, HMAC, ChaCha20 등을 모든 곳에 사용할 수 있듯
+byte[]를 Key 객체로 만들어주는 범용 클래스이다.
+이 클래스에는 여러 문제점이 있었는데
+1. 문자열을 잘못 적을 수 있다.
+    "HmacSHA512"를 입력해야 하는데 "HmacSHA521" 또는 "SHA512" 잘못 작성하여 컴파일 시 잡히지 않아 오류를 일으킨다.
+2. Key 길이 검사를 안한다.
+    byte[] key = "abc".getBytes();
+    new SecretKeySpec(key, ...);
+
+    HS512에서는 512bit 이상의 키를 사용하는 것이 권장되고 JJWT는 이것을 검사하고 싶었다.
+3. JWT와 맞지 않는 Key도 만들 수 있다.
+    new SecretKeySpec(bytes, "AES")
+
+    JWT HMAC에서는 AES Key를 사용할 이유가 없다.
+
+그래서 요구에 맞는 JJWT를 위한 함수를 만들었고 그 함수가 Keys.hmacShaKeyFor()이다.
+SecretKeySpec 함수가 Deprecated된 것이 아니고 JJWT를 위해 만들어졌던 API가 Deprecated 되었다고 생각하면 된다.

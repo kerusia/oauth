@@ -1,0 +1,5 @@
+jwt:
+  secret: bXluYW1laXNrZXJ1c2lhbXluYW1laXNrZXJ1c2lhbXluYW1laXNrZXJ1c2lhbXluYW1laXNrZXJ1c2lhMTIzNA==
+  access-token-expiration: 1800000
+  refresh-token-expiration: 1209600000
+  issuer: kerusia
