@@ -1,5 +1,6 @@
 package com.withsw.oauth.common.auth;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -30,10 +31,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public Claims verifyToken(String token) {
         return Jwts.parser()
                 .verifyWith(jwtSecretKey)
                 .build()
-                .isSigned(token);
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
