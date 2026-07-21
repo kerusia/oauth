@@ -29,22 +29,26 @@ public class JwtTokenFilter extends GenericFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+
+
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         String token = httpServletRequest.getHeader(JwtConstants.AUTHORIZATION_HEADER);
 
         try {
-            String jwtToken = JwtTokenExtractor.extract(token);
-            Claims claims = jwtTokenProvider.verifyToken(jwtToken);
+            if(token != null) {
+                String jwtToken = JwtTokenExtractor.extract(token);
+                Claims claims = jwtTokenProvider.verifyToken(jwtToken);
 
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get(JwtConstants.ROLE)));
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get(JwtConstants.ROLE)));
 
-            UserDetails userDetails = new User(claims.getSubject(), "", authorities);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, jwtToken, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UserDetails userDetails = new User(claims.getSubject(), "", authorities);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, jwtToken, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
 
             filterChain.doFilter(servletRequest, servletResponse);
         }
