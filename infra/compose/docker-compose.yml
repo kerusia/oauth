@@ -28,14 +28,11 @@ services:
     stdin_open: true
     volumes:
       - ../../client:/app
-      - oauth_node_modules:/app/node_modules
     networks:
       - oauth-network
     #command: sleep infinity
     command: >
       sh -c "npm run dev -- --host --port 3000"
-volumes:
-  oauth_node_modules:
 networks:
   oauth-network:
     driver: bridge
