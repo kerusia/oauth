@@ -6,9 +6,6 @@ services:
       - "3306:3306"
     volumes:
       - ../../data/mariadb:/var/lib/mysql
-    tmpfs:
-      - /run/mariadb:uid=1103,gid=1103,mode=777
-      - /var/run/mysqld:uid=1103,gid=1103,mode=777
     environment:
       - MARIADB_ROOT_PASSWORD=admin123!
       - MARIADB_DATABASE=oauth_db
