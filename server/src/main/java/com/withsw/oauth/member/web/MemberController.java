@@ -57,14 +57,14 @@ public class MemberController {
         AccessTokenDto accessTokenDto = googleService.getAccessToken(redirectDto.getCode());
 
         // 구글 프로필 조회
-        GoogleProfileDto googleProfileDto = googleService.getProfile(accessTokenDto.getAccessToken());
+        GoogleProfileDto googleProfileDto = googleService.getProfile(accessTokenDto.getAccessToken(), accessTokenDto.getTokenType());
 
         // 사용자 조회
         Member originalMember = memberService.getMemberBySocialId(googleProfileDto.getSub());
 
         // 미가입 상태이면 회원가입
         if(originalMember == null) {
-            originalMember = memberService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE);
+            originalMember = memberService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), googleProfileDto.getName(), SocialType.GOOGLE);
         }
 
         // 토큰 발급

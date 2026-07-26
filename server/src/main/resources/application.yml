@@ -14,6 +14,8 @@ spring:
       ddl-auto: create
     show-sql: true
   config:
-    import: classpath:application-jwt.yml
+    import:
+      - classpath:application-jwt.yml
+      - classpath:application-oauth.yml
 server:
   port: 8080

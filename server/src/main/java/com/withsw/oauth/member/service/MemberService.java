@@ -50,10 +50,11 @@ public class MemberService {
         return memberRepository.findBySocialId(socialId).orElse(null);
     }
 
-    public Member createOauth(String sub, String email, SocialType socialType) {
+    public Member createOauth(String sub, String email, String name, SocialType socialType) {
         Member member = Member.builder()
                 .uuid(UUID.randomUUID().toString())
                 .email(email)
+                .name(name)
                 .socialType(socialType)
                 .socialId(sub)
                 .build();
