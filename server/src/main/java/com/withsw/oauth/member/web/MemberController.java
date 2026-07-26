@@ -2,8 +2,9 @@ package com.withsw.oauth.member.web;
 
 import com.withsw.oauth.common.auth.JwtTokenProvider;
 import com.withsw.oauth.member.domain.Member;
-import com.withsw.oauth.member.dto.MemberCreateDto;
-import com.withsw.oauth.member.dto.MemberLoginDto;
+import com.withsw.oauth.member.domain.SocialType;
+import com.withsw.oauth.member.dto.*;
+import com.withsw.oauth.member.service.GoogleService;
 import com.withsw.oauth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.Map;
 @RestController
 public class MemberController {
     private final MemberService memberService;
+    private final GoogleService googleService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/create")
@@ -43,6 +45,33 @@ public class MemberController {
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("uuid", member.getUuid());
+        loginInfo.put("token", jwtToken);
+
+        return new ResponseEntity<>(loginInfo, HttpStatus.OK);
+    }
+
+    @PostMapping("/google/login")
+    public ResponseEntity<?> googleLogin(@RequestBody RedirectDto redirectDto) {
+
+        // 액세스토큰 발급
+        AccessTokenDto accessTokenDto = googleService.getAccessToken(redirectDto.getCode());
+
+        // 구글 프로필 조회
+        GoogleProfileDto googleProfileDto = googleService.getProfile(accessTokenDto.getAccessToken());
+
+        // 사용자 조회
+        Member originalMember = memberService.getMemberBySocialId(googleProfileDto.getSub());
+
+        // 미가입 상태이면 회원가입
+        if(originalMember == null) {
+            originalMember = memberService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE);
+        }
+
+        // 토큰 발급
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getRole().name());
+
+        Map<String, Object> loginInfo = new HashMap<>();
+        loginInfo.put("uuid", originalMember.getUuid());
         loginInfo.put("token", jwtToken);
 
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);

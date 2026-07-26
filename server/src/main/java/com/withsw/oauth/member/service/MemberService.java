@@ -1,6 +1,7 @@
 package com.withsw.oauth.member.service;
 
 import com.withsw.oauth.member.domain.Member;
+import com.withsw.oauth.member.domain.SocialType;
 import com.withsw.oauth.member.dto.MemberCreateDto;
 import com.withsw.oauth.member.dto.MemberLoginDto;
 import com.withsw.oauth.member.repository.MemberRepository;
@@ -43,5 +44,20 @@ public class MemberService {
         }
 
         return member;
+    }
+
+    public Member getMemberBySocialId(String socialId) {
+        return memberRepository.findBySocialId(socialId).orElse(null);
+    }
+
+    public Member createOauth(String sub, String email, SocialType socialType) {
+        Member member = Member.builder()
+                .uuid(UUID.randomUUID().toString())
+                .email(email)
+                .socialType(socialType)
+                .socialId(sub)
+                .build();
+
+        return memberRepository.save(member);
     }
 }

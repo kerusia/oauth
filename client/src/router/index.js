@@ -1,3 +1,4 @@
+import GoogleRedirect from '@/components/GoogleRedirect.vue'
 import Main from '@/components/Main.vue'
 import MemberCreate from '@/components/MemberCreate.vue'
 import MemberLogin from '@/components/MemberLogin.vue'
@@ -15,6 +16,10 @@ const routers = [
   {
     path: '/member/login',
     component: MemberLogin
+  },
+  {
+    path: '/oauth/google/redirect',
+    component:  GoogleRedirect
   }
 ]
 

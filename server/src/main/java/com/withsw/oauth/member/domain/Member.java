@@ -33,4 +33,6 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
+
+    private String socialId;
 }

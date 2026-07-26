@@ -1,0 +1,93 @@
+[구글]
+1. https://console.cloud.google.com 접속
+2. "새 프로젝트" 생성
+3. 생성된 프로젝트 선택
+4. "API 및 서비스" 선택
+5. "OAuth 동의 화면" 메뉴 선택
+    - 정보들 입력
+6. 5번 과정 완료 후 좌측 메뉴에서 개요를 선택하고 "OAuth Client ID 만들기" 버튼 클릭
+    애플리케이션 유형: 웹 애플리케이션
+    이름: My Diary
+    승인된 리디렉션 URI: http://localhost:3000/oauth/google/redirect
+    만들기 버튼
+
+    만들기가 완료되면 생성된 클라이언트의 상세 정보 페이지가 표시되는데 "클라이언트 보안 비밀번호" 영역에서
+    JSON 파일을 다운로드 받을 수 있고 파일 내의 client_id, client_secret이 해당 앱의 고유 식별자가 된다.
+    JSON 파일은 최초에만 다운로드 받을 수 있고 분실할 경우 새로운 secret을 추가해야만 다운로드 받을 수 있다.
+
+    생성된 OAuth Client ID의 상세 정보는 좌측 메뉴의 "클라이언트"에서 다시 확인할 수 있다.
+7. 구글로부터 제공받을 사용자 정보 범위 결정은 좌측 메뉴의 "데이터 액세스"에서 할 수 있다.
+    "범위 추가 또는 삭제" 버튼 클릭하면 필요 항목을 설정 가능하다.
+    email, profile, openid 는 기본적으로 제공되는 정보이다.
+    나머지 추가 정보를 받아오기 위해서는 "대상" 메뉴에서 "앱 개시"를 하거나 "테스트 사용자"에 사용자ID를 지정해줘야만
+    사용이 가능하다.
+
+    "앱 개시"를 하게 될 경우 구글의 승인 절차가 필요하다.
+
+8. 인증 흐름
+    (1) 구글 로그인 버튼 클릭 시 구글 계정 OAuth URL로 리다이렉션 및 구글 로그인
+            다운로드 받은 secret.json에서 다음 항목을 작성 후 웹페이지 이동
+
+            googleAuthUri: "https://accounts.google.com/o/oauth2/v2/auth" << 강의 URL 이후 버전업 되어 변경됨
+            googleClientId: client_id
+            googleRedirectUri: redirect_uris 배열 내용 중 1건,
+            googleScope: "openid profile email",
+            googleResponseType: "code"
+
+            const authUri = `${this.googleAuthUri}?client_id=${this.googleClientId}&redirect_uri=${this.googleRedirectUri}&response_type=${this.googleResponseType}&scope=${this.googleScope}`;
+
+            window.location.href = authUri;
+    (2) 구글 로그인이 정상적으로 이루어지면 (1)에서 전달한 redirect_uri 경로로 인가코드를 리턴해 줌
+        프론트엔드 단에서 redirect_uri에 대응하는 웹페이지를 구현해야 함.
+
+        [GoogleRedirect.vue]
+        <template>
+            <div>
+                구글 로그인 진행 중...
+            </div>
+        </template>
+
+        <script>
+        import axios from 'axios';
+
+        export default {
+            created() {
+                const code = new URL(window.location.href).searchParams.get("code");
+                this.sendCodeToServer(code);
+            },
+            methods: {
+                async sendCodeToServer(code) {
+                    const response = await axios.post("http://localhost:8080/member/google/login", {code: code});
+                    const token = response.data.token;
+                    localStorage.setItem("token", token);
+                    window.location.href = "/";
+                }
+            }
+        }
+        </script>
+
+    (3) 클라이언트에서는 리턴받은 인가코드를 서버로 전송하고 서버는 인가 코드로 구글 OAuth 2.0 액세스 토큰을 가져온다.
+            다운로드 받은 secret.json에서 다음 항목을 작성 후 웹페이지 이동
+
+            [서버단 구현]
+            googleTokenUri: token_uri
+            googleAuthCode: (2)번 응답 값
+            googleClientId: client_id
+            googleClientSecret: client_secret
+            googleGrantType:
+            googleRedirectUri: redirect_uris 배열 내용 중 1건 << 실질적으로 콜백되지는 않음
+
+            const getTokenUri = `${this.googleTokenUri}?code=${this.googleAuthCode}&client_id=${this.googleClientId}&client_secret=${this.googleClientSecret}&grant_type=${this.googleGrantType}&redirect_uri=${this.googleTokenRedirectUri}`;
+
+            const response = await axios.post("http://localhost:8080/member/google/login", {code: code});
+            const token = response.data.token;
+            localStorage.setItem("token", token);
+
+    (4) 발급받은 액세스 토큰을 사용해 Header에 Authorization값 세팅하고 사용자 정보를 조회한다.
+            https://openidconnect.googleapis.com/v1/userinf << 강의 당시 가장 최신으로 보인다고 함
+            https://www.googleapis.com/userinfo/v2/me
+            https://www.googleapis.com/oauth2/v3/userinfo
+
+
+
+    (5) 조회된 사용자 정보로 로그인 처리, 회원 가입 등의 정해진 철자에 맡게 처리한다.

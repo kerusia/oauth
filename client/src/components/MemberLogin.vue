@@ -52,7 +52,12 @@ export default {
     data() {
         return {
             email: "",
-            password: ""
+            password: "",
+            googleAuthUri: "https://accounts.google.com/o/oauth2/v2/auth",
+            googleClientId: "87066797677-hgm50eo0bvh4rj0jh22g71h70l4rk8gv.apps.googleusercontent.com",
+            googleRedirectUri: "http://localhost:3000/oauth/google/redirect",
+            googleScope: "openid profile email",
+            googleResponseType: "code"
         }
     },
     methods: {
@@ -67,7 +72,8 @@ export default {
             window.location.href = "/"
         },
         googleLogin() {
-
+            const authUri = `${this.googleAuthUri}?client_id=${this.googleClientId}&redirect_uri=${this.googleRedirectUri}&response_type=${this.googleResponseType}&scope=${this.googleScope}`;
+            window.location.href = authUri;
         },
         kakaoLogin() {
 
