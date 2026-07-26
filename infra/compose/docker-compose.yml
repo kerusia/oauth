@@ -2,7 +2,6 @@ services:
   db:
     image: mariadb:12
     container_name: oauth-mariadb
-    user: "1103:1103"
     ports:
       - "3306:3306"
     volumes:
