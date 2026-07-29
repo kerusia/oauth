@@ -5,6 +5,7 @@ import com.withsw.oauth.member.domain.Member;
 import com.withsw.oauth.member.domain.SocialType;
 import com.withsw.oauth.member.dto.*;
 import com.withsw.oauth.member.service.GoogleService;
+import com.withsw.oauth.member.service.KakaoService;
 import com.withsw.oauth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
     private final GoogleService googleService;
+    private final KakaoService kakaoService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/create")
@@ -65,6 +67,33 @@ public class MemberController {
         // 미가입 상태이면 회원가입
         if(originalMember == null) {
             originalMember = memberService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), googleProfileDto.getName(), SocialType.GOOGLE);
+        }
+
+        // 토큰 발급
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), originalMember.getRole().name());
+
+        Map<String, Object> loginInfo = new HashMap<>();
+        loginInfo.put("uuid", originalMember.getUuid());
+        loginInfo.put("token", jwtToken);
+
+        return new ResponseEntity<>(loginInfo, HttpStatus.OK);
+    }
+
+    @PostMapping("/kakao/login")
+    public ResponseEntity<?> kakaoLogin(@RequestBody RedirectDto redirectDto) {
+
+        // 액세스토큰 발급
+        AccessTokenDto accessTokenDto = kakaoService.getAccessToken(redirectDto.getCode());
+
+        // 구글 프로필 조회
+        KakaoResponseDto kakaoResponseDto = kakaoService.getProfile(accessTokenDto.getAccessToken(), accessTokenDto.getTokenType());
+
+        // 사용자 조회
+        Member originalMember = memberService.getMemberBySocialId(kakaoResponseDto.id());
+
+        // 미가입 상태이면 회원가입
+        if(originalMember == null) {
+            originalMember = memberService.createOauth(kakaoResponseDto.id(), kakaoResponseDto.kakaoAccount().email(), kakaoResponseDto.kakaoAccount().profile().nickname(), SocialType.KAKAO);
         }
 
         // 토큰 발급

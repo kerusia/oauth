@@ -8,4 +8,11 @@ oauth:
     profile-uri: https://openidconnect.googleapis.com/v1/userinfo
     auth-provider-x509-cert-url: https://www.googleapis.com/oauth2/v1/certs
     grant-type: "authorization_code"
-
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+    auth-uri: https://kauth.kakao.com/oauth/authorize
+    token-uri: https://kauth.kakao.com/oauth/token
+    redirect-uri: http://localhost:3000/oauth/kakao/redirect
+    profile-uri: https://kapi.kakao.com/v2/user/me
+    grant-type: "authorization_code"

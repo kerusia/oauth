@@ -1,0 +1,22 @@
+[질문] record를 언제 사용하는 것일까?
+
+[확인]
+자바는 원래 데이터를 담기 위한 클래스도 너무 길었다.
+예를 들어, ID, 이름, 나이 3개의 값을 가지는 클래스를 만드려면
+    class User {
+        private Long id;
+        private String name;
+        private Integer age;
+    }
+이렇게 3줄만 있으면 되는데, 캡슐화/언캡슐화, 데이터 접근 제어 등과 같은
+관례적 이유로 setter/getter, toString, hashCode, equals 등을 작성해야했고
+이 형식은 반복적으로 데이터 클래스에 반복되었다.
+이러한 불필요 코드 작성을 없애기 위해 Java 16 부터 record라는 개념을 추가했고
+다음과 같이 작성하면 Java가 자동으로 생성자 getter, toString, hashCode, equals를 만들어준다.
+특징으로는 setter은 존재하지 않고 생성자를 통해 생성되면 Immutable(불변 객체)가 된다.
+    public record User (
+        private Long id;
+        private String name;
+        private Integer age;
+    ) {
+    }

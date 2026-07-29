@@ -57,7 +57,11 @@ export default {
             googleClientId: "87066797677-hgm50eo0bvh4rj0jh22g71h70l4rk8gv.apps.googleusercontent.com",
             googleRedirectUri: "http://localhost:3000/oauth/google/redirect",
             googleScope: "openid profile email",
-            googleResponseType: "code"
+            googleResponseType: "code",
+            kakaoAuthUri: "https://kauth.kakao.com/oauth/authorize",
+            kakaoClientId: "b78424646042559fd7a7d5f7d3dfd428",
+            kakaoRedirectUri: "http://localhost:3000/oauth/kakao/redirect",
+            kakaoResponseType: "code"
         }
     },
     methods: {
@@ -76,7 +80,8 @@ export default {
             window.location.href = authUri;
         },
         kakaoLogin() {
-
+            const authUri = `${this.kakaoAuthUri}?client_id=${this.kakaoClientId}&redirect_uri=${this.kakaoRedirectUri}&response_type=${this.kakaoResponseType}`;
+            window.location.href = authUri;
         }
     }
 }
