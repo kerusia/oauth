@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class GoogleProfileDto {
+public class GoogleResponseDto {
     private String sub;
     private String email;
     @JsonProperty("email_verified")

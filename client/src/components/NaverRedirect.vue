@@ -1,6 +1,6 @@
 <template>
     <div>
-        구글 로그인 진행 중...
+        네이버 로그인 진행 중...
     </div>
 </template>
 
@@ -14,7 +14,9 @@ export default {
     },
     methods: {
         async sendCodeToServer(code) {
-            const response = await axios.post("http://localhost:8080/member/google/login", {code});
+
+            const response = await axios.post("http://localhost:8080/member/naver/login", {code});
+            console.log(response);
             const token = response.data.token;
             localStorage.setItem("token", token);
             window.location.href = "/";

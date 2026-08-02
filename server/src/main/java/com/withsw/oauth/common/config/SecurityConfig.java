@@ -30,12 +30,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain myFilter(HttpSecurity httpSecurity) throws Exception {
+        String[] authorizeUrls = {
+                "/member/create",
+                "/member/login",
+                "/member/google/login",
+                "/member/kakao/login",
+                "/member/naver/login",
+                "/oauth2/**"
+        };
+
         return httpSecurity
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화 (Rest API 구조이므로)
                 .httpBasic(AbstractHttpConfigurer::disable) // 사용자 이름과 비밀번호를 Base64로 인코딩하여 인증값 활용
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 토큰 방식으로 세션 정책은 사용하지 않음
-                .authorizeHttpRequests(a -> a.requestMatchers("/member/create", "/member/login", "/member/google/login", "/member/kakao/login").permitAll().anyRequest().authenticated()) // 특정 URL패턴에 대해 인증처리 제외
+                .authorizeHttpRequests(a -> a.requestMatchers(authorizeUrls).permitAll().anyRequest().authenticated()) // 특정 URL패턴에 대해 인증처리 제외
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

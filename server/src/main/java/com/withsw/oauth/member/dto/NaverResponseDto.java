@@ -7,21 +7,17 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record KakaoResponseDto(
-    String id,
-    KakaoAccountDto kakaoAccount
+public record NaverResponseDto(
+    String resultCode,
+    String message,
+    NaverProfileDto response
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record KakaoAccountDto(
-        KakaoProfileDto profile,
-        String email,
-        String isEmailVerified
-    ) {
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public record KakaoProfileDto(
+    public record NaverProfileDto(
+            String id,
+            String email,
             String nickname,
-            String profileImageUrl
-        ) {
-        }
+            String profileImage
+    ) {
     }
 }

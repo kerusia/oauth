@@ -23,18 +23,22 @@
                         </v-form>
                         <br />
                         <v-row>
-                            <v-col cols="6" class="d-flex justify-center">
+                            <v-col class="d-flex justify-center">
                                 <img
-                                    src="@/assets/google_login.png"
-                                    style="max-height: 40px; width: auto;"
+                                    src="@/assets/logo_google.svg"
                                     @click="googleLogin()"
                                 />
                             </v-col>
-                            <v-col cols="6" class="d-flex justify-center">
+                            <v-col class="d-flex justify-center">
                                 <img
-                                    src="@/assets/kakao_login.png"
-                                    style="max-height: 40px; width: auto;"
+                                    src="@/assets/logo_kakao.svg"
                                     @click="kakaoLogin()"
+                                />
+                            </v-col>
+                            <v-col class="d-flex justify-center">
+                                <img
+                                    src="@/assets/logo_naver.svg"
+                                    @click="naverLogin()"
                                 />
                             </v-col>
                         </v-row>
@@ -61,7 +65,11 @@ export default {
             kakaoAuthUri: "https://kauth.kakao.com/oauth/authorize",
             kakaoClientId: "b78424646042559fd7a7d5f7d3dfd428",
             kakaoRedirectUri: "http://localhost:3000/oauth/kakao/redirect",
-            kakaoResponseType: "code"
+            kakaoResponseType: "code",
+            naverAuthUri: "https://nid.naver.com/oauth2.0/authorize",
+            naverClientId: "guRV0LEemnNVpTon_69J",
+            naverRedirectUri: "http://localhost:3000/oauth/naver/redirect",
+            naverResponseType: "code"
         }
     },
     methods: {
@@ -81,6 +89,12 @@ export default {
         },
         kakaoLogin() {
             const authUri = `${this.kakaoAuthUri}?client_id=${this.kakaoClientId}&redirect_uri=${this.kakaoRedirectUri}&response_type=${this.kakaoResponseType}`;
+            window.location.href = authUri;
+        },
+        naverLogin() {
+            //const state = crypto.randomUUID();
+            //const authUri = `${this.naverAuthUri}?client_id=${this.naverClientId}&redirect_uri=${this.naverRedirectUri}&response_type=${this.naverResponseType}&state=${state}`;
+            const authUri = `${this.naverAuthUri}?client_id=${this.naverClientId}&redirect_uri=${this.naverRedirectUri}&response_type=${this.naverResponseType}`;
             window.location.href = authUri;
         }
     }

@@ -1,8 +1,6 @@
 package com.withsw.oauth.member.service;
 
 import com.withsw.oauth.member.dto.AccessTokenDto;
-import com.withsw.oauth.member.dto.GoogleProfileDto;
-import com.withsw.oauth.member.dto.KakaoProfileDto;
 import com.withsw.oauth.member.dto.KakaoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

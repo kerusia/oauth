@@ -1,7 +1,8 @@
 package com.withsw.oauth.member.service;
 
 import com.withsw.oauth.member.dto.AccessTokenDto;
-import com.withsw.oauth.member.dto.GoogleResponseDto;
+import com.withsw.oauth.member.dto.KakaoResponseDto;
+import com.withsw.oauth.member.dto.NaverResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,24 +14,21 @@ import org.springframework.web.client.RestClient;
 
 @RequiredArgsConstructor
 @Service
-public class GoogleService {
+public class NaverService {
 
-    private final GoogleProperties googleProperties;
+    private final NaverProperties naverProperties;
 
     public AccessTokenDto getAccessToken(String code) {
-        // 인가코드, client_id, client_secret, redirect_uri, grant_type
-
-        // Spring6 부터 RestTemplate Deprecated되고 RestClient 사용 권장
         RestClient restClient = RestClient.create();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         params.add("code", code);
-        params.add("client_id", googleProperties.clientId());
-        params.add("client_secret", googleProperties.clientSecret());
-        params.add("redirect_uri", googleProperties.redirectUri());
-        params.add("grant_type", googleProperties.grantType());
+        params.add("client_id", naverProperties.clientId());
+        params.add("client_secret", naverProperties.clientSecret());
+        params.add("redirect_uri", naverProperties.redirectUri());
+        params.add("grant_type", naverProperties.grantType());
 
         ResponseEntity<AccessTokenDto> response = restClient.post()
-                .uri(googleProperties.tokenUri())
+                .uri(naverProperties.tokenUri())
                 .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .body(params)
                 .retrieve() // body 값만 추출
@@ -41,14 +39,14 @@ public class GoogleService {
         return response.getBody();
     }
 
-    public GoogleResponseDto getProfile(String accessToken, String tokenType) {
+    public NaverResponseDto getProfile(String accessToken, String tokenType) {
 
         RestClient restClient = RestClient.create();
-        ResponseEntity<GoogleResponseDto> response = restClient.post()
-                .uri(googleProperties.profileUri())
+        ResponseEntity<NaverResponseDto> response = restClient.post()
+                .uri(naverProperties.profileUri())
                 .header(HttpHeaders.AUTHORIZATION, tokenType + " " + accessToken)
                 .retrieve()
-                .toEntity(GoogleResponseDto.class);
+                .toEntity(NaverResponseDto.class);
 
         //System.out.println("응답 Profile JSON: " + response.getBody());
 
