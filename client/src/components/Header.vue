@@ -20,6 +20,21 @@ export default {
         }
     },
     created() {
+        // 쿼리스트링 방식
+        const token = new URL(window.location.href).searchParams.get("token");
+        if(token) {
+            localStorage.setItem("token", token);
+            window.location.href = "/";
+        }
+
+        // 쿠키 방식
+        /*const token = Cookies.get("token");
+        if(token) {
+            localStorage.setItem("token", token);
+            Cookies.remove("token");
+            window.location.href = "/";
+        }*/
+
         if(localStorage.getItem("token")) {
             this.isLogin = true;
         }

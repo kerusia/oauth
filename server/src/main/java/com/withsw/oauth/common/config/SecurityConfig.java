@@ -1,6 +1,8 @@
 package com.withsw.oauth.common.config;
 
 import com.withsw.oauth.common.auth.JwtTokenFilter;
+import com.withsw.oauth.oauth.service.CustomOAuth2UserService;
+import com.withsw.oauth.oauth.service.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +24,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
-
-    @Bean
-    public PasswordEncoder makePassword() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public SecurityFilterChain myFilter(HttpSecurity httpSecurity) throws Exception {
@@ -46,6 +45,10 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 토큰 방식으로 세션 정책은 사용하지 않음
                 .authorizeHttpRequests(a -> a.requestMatchers(authorizeUrls).permitAll().anyRequest().authenticated()) // 특정 URL패턴에 대해 인증처리 제외
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(o -> {
+                    o.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService));
+                    o.successHandler(loginSuccessHandler);
+                })
                 .build();
     }
 

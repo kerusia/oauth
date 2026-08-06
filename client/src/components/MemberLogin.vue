@@ -23,6 +23,12 @@
                         </v-form>
                         <br />
                         <v-row>
+                            <v-col class="d-flex justify-start">
+                                클라이언트
+                            </v-col>
+                        </v-row>
+                        <br />
+                        <v-row>
                             <v-col class="d-flex justify-center">
                                 <img
                                     src="@/assets/logo_google.svg"
@@ -42,6 +48,33 @@
                                 />
                             </v-col>
                         </v-row>
+                        <br />
+                        <v-row>
+                            <v-col class="d-flex justify-start">
+                                서버
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col class="d-flex justify-center">
+                                <img
+                                    src="@/assets/logo_google.svg"
+                                    @click="serverGoogleLogin()"
+                                />
+                            </v-col>
+                            <v-col class="d-flex justify-center">
+                                <img
+                                    src="@/assets/logo_kakao.svg"
+                                    @click="serverKakaoLogin()"
+                                />
+                            </v-col>
+                            <v-col class="d-flex justify-center">
+                                <img
+                                    src="@/assets/logo_naver.svg"
+                                    @click="serverNaverLogin()"
+                                />
+                            </v-col>
+                        </v-row>
+
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -69,7 +102,10 @@ export default {
             naverAuthUri: "https://nid.naver.com/oauth2.0/authorize",
             naverClientId: "guRV0LEemnNVpTon_69J",
             naverRedirectUri: "http://localhost:3000/oauth/naver/redirect",
-            naverResponseType: "code"
+            naverResponseType: "code",
+            serverGoogleAuthUri: "http://localhost:8080/oauth2/authorization/google",
+            serverKakaoAuthUri: "http://localhost:8080/oauth2/authorization/kakao",
+            serverNaverAuthUri: "http://localhost:8080/oauth2/authorization/naver",
         }
     },
     methods: {
@@ -95,6 +131,18 @@ export default {
             //const state = crypto.randomUUID();
             //const authUri = `${this.naverAuthUri}?client_id=${this.naverClientId}&redirect_uri=${this.naverRedirectUri}&response_type=${this.naverResponseType}&state=${state}`;
             const authUri = `${this.naverAuthUri}?client_id=${this.naverClientId}&redirect_uri=${this.naverRedirectUri}&response_type=${this.naverResponseType}`;
+            window.location.href = authUri;
+        },
+        serverGoogleLogin() {
+            const authUri = `${this.serverGoogleAuthUri}`;
+            window.location.href = authUri;
+        },
+        serverKakaoLogin() {
+            const authUri = `${this.serverKakaoAuthUri}`;
+            window.location.href = authUri;
+        },
+        serverNaverLogin() {
+            const authUri = `${this.serverNaverAuthUri}`;
             window.location.href = authUri;
         }
     }
