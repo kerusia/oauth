@@ -13,12 +13,26 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@AllArgsConstructor
 @Getter
-public class CustomOAuth2User extends DefaultOAuth2User {
+public class CustomOAuth2User implements OAuth2User {
     private final Member member;
+    private final Map<String, Object> attributes;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, Member member) {
-        super(authorities, attributes, nameAttributeKey);
-        this.member = member;
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getName() {
+        return member.getSocialId();
     }
 }
