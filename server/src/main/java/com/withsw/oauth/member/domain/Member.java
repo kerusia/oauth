@@ -11,6 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_member_provider_provider_id",
+                columnNames = {"socialType", "socialId"}
+        )
+)
 public class Member {
 
     @Id
@@ -22,6 +28,7 @@ public class Member {
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
