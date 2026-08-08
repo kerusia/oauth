@@ -1,18 +1,13 @@
-package com.withsw.oauth.oauth.dto;
+package com.withsw.oauth.oauth2.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.withsw.oauth.member.domain.SocialType;
 import com.withsw.oauth.member.dto.GoogleResponseDto;
-import com.withsw.oauth.oauth.service.RegistrationType;
-
-import java.util.Map;
 
 public class GoogleResponse implements OAuth2Response {
     private final GoogleResponseDto googleResponseDto;
 
-    public GoogleResponse(Map<String, Object> oauth2User) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.googleResponseDto = objectMapper.convertValue(oauth2User, GoogleResponseDto.class);
+    public GoogleResponse(GoogleResponseDto googleResponseDto) {
+        this.googleResponseDto = googleResponseDto;
     }
 
     @Override

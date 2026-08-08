@@ -46,8 +46,8 @@ public class MemberService {
         return member;
     }
 
-    public Member getMemberBySocialId(String socialId) {
-        return memberRepository.findBySocialId(socialId).orElse(null);
+    public Member getMemberBySocialTypeAndSocialId(SocialType socialType, String socialId) {
+        return memberRepository.findBySocialTypeAndSocialId(socialType, socialId).orElse(null);
     }
 
     public Member createOauth(String sub, String email, String name, SocialType socialType) {

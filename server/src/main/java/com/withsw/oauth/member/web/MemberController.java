@@ -64,7 +64,7 @@ public class MemberController {
         GoogleResponseDto googleResponseDto = googleService.getProfile(accessTokenDto.getAccessToken(), accessTokenDto.getTokenType());
 
         // 사용자 조회
-        Member originalMember = memberService.getMemberBySocialId(googleResponseDto.getSub());
+        Member originalMember = memberService.getMemberBySocialTypeAndSocialId(SocialType.GOOGLE, googleResponseDto.getSub());
 
         // 미가입 상태이면 회원가입
         if(originalMember == null) {
@@ -91,7 +91,7 @@ public class MemberController {
         KakaoResponseDto kakaoResponseDto = kakaoService.getProfile(accessTokenDto.getAccessToken(), accessTokenDto.getTokenType());
 
         // 사용자 조회
-        Member originalMember = memberService.getMemberBySocialId(kakaoResponseDto.id());
+        Member originalMember = memberService.getMemberBySocialTypeAndSocialId(SocialType.KAKAO, kakaoResponseDto.id());
 
         // 미가입 상태이면 회원가입
         if(originalMember == null) {
@@ -118,7 +118,7 @@ public class MemberController {
         NaverResponseDto naverResponseDto = naverService.getProfile(accessTokenDto.getAccessToken(), accessTokenDto.getTokenType());
 
         // 사용자 조회
-        Member originalMember = memberService.getMemberBySocialId(naverResponseDto.response().id());
+        Member originalMember = memberService.getMemberBySocialTypeAndSocialId(SocialType.NAVER, naverResponseDto.response().id());
 
         // 미가입 상태이면 회원가입
         if(originalMember == null) {

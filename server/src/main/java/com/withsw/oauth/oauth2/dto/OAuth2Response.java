@@ -1,4 +1,4 @@
-package com.withsw.oauth.oauth.dto;
+package com.withsw.oauth.oauth2.dto;
 
 public interface OAuth2Response {
     String getProviderId();

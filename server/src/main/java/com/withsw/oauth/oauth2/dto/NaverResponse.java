@@ -1,18 +1,13 @@
-package com.withsw.oauth.oauth.dto;
+package com.withsw.oauth.oauth2.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.withsw.oauth.member.domain.SocialType;
 import com.withsw.oauth.member.dto.NaverResponseDto;
-import com.withsw.oauth.oauth.service.RegistrationType;
-
-import java.util.Map;
 
 public class NaverResponse implements OAuth2Response {
     private final NaverResponseDto naverResponseDto;
 
-    public NaverResponse(Map<String, Object> oauth2User) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.naverResponseDto = objectMapper.convertValue(oauth2User, NaverResponseDto.class);
+    public NaverResponse(NaverResponseDto naverResponseDto) {
+        this.naverResponseDto = naverResponseDto;
     }
 
     @Override

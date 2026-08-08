@@ -1,18 +1,13 @@
-package com.withsw.oauth.oauth.dto;
+package com.withsw.oauth.oauth2.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.withsw.oauth.member.domain.SocialType;
 import com.withsw.oauth.member.dto.KakaoResponseDto;
-import com.withsw.oauth.oauth.service.RegistrationType;
-
-import java.util.Map;
 
 public class KakaoResponse implements OAuth2Response {
     private final KakaoResponseDto kakaoResponseDto;
 
-    public KakaoResponse(Map<String, Object> oauth2User) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.kakaoResponseDto = objectMapper.convertValue(oauth2User, KakaoResponseDto.class);
+    public KakaoResponse(KakaoResponseDto kakaoResponseDto) {
+        this.kakaoResponseDto = kakaoResponseDto;
     }
 
     @Override

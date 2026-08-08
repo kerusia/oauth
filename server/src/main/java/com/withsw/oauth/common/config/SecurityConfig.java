@@ -1,16 +1,15 @@
 package com.withsw.oauth.common.config;
 
 import com.withsw.oauth.common.auth.JwtTokenFilter;
-import com.withsw.oauth.oauth.service.CustomOAuth2UserService;
-import com.withsw.oauth.oauth.service.LoginSuccessHandler;
+import com.withsw.oauth.oauth2.service.CustomOAuth2UserService;
+import com.withsw.oauth.oauth2.service.CustomOidcUserService;
+import com.withsw.oauth.oauth2.service.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOidcUserService customOidcUserService;
     private final LoginSuccessHandler loginSuccessHandler;
 
     @Bean
@@ -46,7 +46,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a.requestMatchers(authorizeUrls).permitAll().anyRequest().authenticated()) // 특정 URL패턴에 대해 인증처리 제외
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(o -> {
-                    o.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService));
+                    o.userInfoEndpoint(userInfo -> {
+                        userInfo.userService(customOAuth2UserService);
+                        userInfo.oidcUserService(customOidcUserService);
+                    });
                     o.successHandler(loginSuccessHandler);
                 })
                 .build();
